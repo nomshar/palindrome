@@ -1,6 +1,0 @@
-/Users/nomshar/Projects/amazon1/Palindrome/bin/Release/Palindrome.exe
-/Users/nomshar/Projects/amazon1/Palindrome/bin/Release/Palindrome.pdb
-/Users/nomshar/Projects/amazon1/Palindrome/obj/Release/Palindrome.csprojAssemblyReference.cache
-/Users/nomshar/Projects/amazon1/Palindrome/obj/Release/Palindrome.csproj.CoreCompileInputs.cache
-/Users/nomshar/Projects/amazon1/Palindrome/obj/Release/Palindrome.exe
-/Users/nomshar/Projects/amazon1/Palindrome/obj/Release/Palindrome.pdb
