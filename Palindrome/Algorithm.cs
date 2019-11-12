@@ -18,6 +18,31 @@ namespace Palindrome
                 X = x;
                 Y = y;
             }
+
+            public override bool Equals(object obj)
+            {
+                var point = obj as Point;
+                if (point == null)
+                {
+                    return false;
+                }
+                return Letter == point.Letter
+                       && Y == point.Y
+                       && X == point.X;
+            }
+
+            public override int GetHashCode()
+            {
+                return X & Y;
+            }
+
+            public bool SameOnTheRight(Point point)
+            {
+                return Letter == point.Letter
+                       && Y == point.Y
+                       && X == point.X - 1;
+
+            }
         }
         
         public class Pair
@@ -104,22 +129,47 @@ namespace Palindrome
             vertex.Add(pairs[i]);
             i++;
             var vi = i;
-            while (i < pairs.Length)
+            while (i <= pairs.Length)
             {
                 var prev = vertex[vi - 1];
-                var next = pairs[i];
-                if (Math.Sign(prev.Slope) != Math.Sign(next.Slope))
+                var next = i < pairs.Length ? pairs[i] : null;
+                if (next == null || Math.Sign(prev.Slope) != Math.Sign(next.Slope))
                 {
                     // we found edge
+                    // check slope
+                    // if slope == 0, so the whole vertex is palindrome
+                    if (prev.Slope == 0)
+                    {
+                        var p = BuildPalindrome(pairs, vertex, new List<Pair>());
+                        Console.WriteLine(p);
+                        result.Add(p);
+                    }
+                    
                     // try to find mirror vertex
                     while (vertex.Count > 0)
                     {
                         var mirrorVertex = FindMirrorVertex(vertex, i, last, pairs);
                         if (mirrorVertex.Count > 0)
                         {
-                            var p = BuildPalindrome(pairs, vertex, mirrorVertex);
-                            Console.WriteLine(p);
-                            result.Add(p);
+                            // TODO: if last point of vertex not equals first point of mirror
+                            // TODO: we should check inner pairs - they should be palindromes also
+                            if (vertex[vertex.Count - 1].Second.Equals(mirrorVertex[0].First)
+                                || vertex[vertex.Count - 1].Second.SameOnTheRight(mirrorVertex[0].First))
+                            {
+                                var p = BuildPalindrome(pairs, vertex, mirrorVertex);
+                                Console.WriteLine(p);
+                                result.Add(p);
+                            }
+                            else
+                            {
+                                vertex.Add(next);
+                                if (i + 1 < pairs.Length)
+                                {
+                                    i++;
+                                    next = pairs[i];
+                                }
+                                continue;
+                            }
                         }
                         else if (vertex.Count == 1 && vertex[0].First.Letter == vertex[0].Second.Letter)
                         {
@@ -184,7 +234,14 @@ namespace Palindrome
                     mirrorPairIndex--;
                     continue;
                 }
-
+                
+                if (result.Count > 0)
+                {
+                    // we found already a part of mirror vertex,
+                    // but it was only a part
+                    // so here we can suppose that for this vertex there is no a mirror one
+                    return new List<Pair>();
+                }
                 mirrorPairIndex++;
             }
             
